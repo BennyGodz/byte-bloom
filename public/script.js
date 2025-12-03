@@ -5,3 +5,5 @@ document.getElementById("clickMeBtn")?.addEventListener("click", () => {
 
 
 console.log("Testing");
+
+console.log("Hi");
