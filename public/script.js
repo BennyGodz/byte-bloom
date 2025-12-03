@@ -8,3 +8,4 @@ console.log("Testing");
 
 console.log("Hi");
 console.alert("ahhh")
+console.log("test2");
