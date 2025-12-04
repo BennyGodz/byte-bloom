@@ -2,29 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ByteBloom - Empowering the next generation through technology and innovation">
   <title>ByteBloom - Home</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Welcome to ByteBloom</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About Us</a>
-      <a href="programs.html">Programs</a>
-      <a href="events.html">Events</a>
-      <a href="donate.html">Donate</a>
-    </nav>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header role="banner">
+    <div class="header-container">
+      <h1>Welcome to ByteBloom</h1>
+      <nav role="navigation" aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a href="index.html" class="nav-link active" aria-current="page">Home</a></li>
+          <li><a href="about.html" class="nav-link">About Us</a></li>
+          <li><a href="programs.html" class="nav-link">Programs</a></li>
+          <li><a href="events.html" class="nav-link">Events</a></li>
+          <li><a href="donate.html" class="nav-link">Donate</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <h2>Our Mission</h2>
-    <p>Empowering the next generation through technology and innovation.</p>
-    <button id="clickMeBtn">Click Me!</button>
+  <main id="main-content" role="main">
+    <section class="hero">
+      <div class="container">
+        <h2>Our Mission</h2>
+        <p class="lead">Empowering the next generation through technology and innovation.</p>
+        <p>At ByteBloom, we believe that every student deserves access to quality technology education. We provide hands-on learning experiences, mentorship, and resources to help young minds flourish in the digital age.</p>
+        <button id="clickMeBtn" class="btn btn-primary" aria-label="Click to learn more">Click Me!</button>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="container">
+        <h2>What We Offer</h2>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>Hands-On Learning</h3>
+            <p>Practical, project-based education that prepares students for real-world challenges.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Expert Mentorship</h3>
+            <p>Learn from industry professionals and experienced educators.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Community Support</h3>
+            <p>Join a vibrant community of learners and innovators.</p>
+          </article>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <footer>
-    <p>&copy; 2025 ByteBloom. All rights reserved.</p>
+  <footer role="contentinfo">
+    <div class="container">
+      <p>&copy; 2025 ByteBloom. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="about.html">About</a> | 
+        <a href="programs.html">Programs</a> | 
+        <a href="events.html">Events</a> | 
+        <a href="donate.html">Donate</a>
+      </p>
+    </div>
   </footer>
 
   <script src="script.js"></script>

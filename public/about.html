@@ -2,28 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Learn about ByteBloom - A non-profit organization focused on technology education">
   <title>ByteBloom - About Us</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>About ByteBloom</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About Us</a>
-      <a href="programs.html">Programs</a>
-      <a href="events.html">Events</a>
-      <a href="donate.html">Donate</a>
-    </nav>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header role="banner">
+    <div class="header-container">
+      <h1>About ByteBloom</h1>
+      <nav role="navigation" aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="about.html" class="nav-link active" aria-current="page">About Us</a></li>
+          <li><a href="programs.html" class="nav-link">Programs</a></li>
+          <li><a href="events.html" class="nav-link">Events</a></li>
+          <li><a href="donate.html" class="nav-link">Donate</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <h2>Who We Are</h2>
-    <p>We are a non-profit organization focused on technology education.</p>
+  <main id="main-content" role="main">
+    <section class="content-section">
+      <div class="container">
+        <h2>Who We Are</h2>
+        <p class="lead">We are a non-profit organization focused on technology education.</p>
+        
+        <article>
+          <h3>Our Story</h3>
+          <p>ByteBloom was founded with a vision to bridge the digital divide and provide equal opportunities for all students to excel in technology. We believe that coding, robotics, and digital literacy are essential skills for the 21st century.</p>
+        </article>
+
+        <article>
+          <h3>Our Values</h3>
+          <ul class="values-list">
+            <li><strong>Accessibility:</strong> Making tech education available to everyone, regardless of background</li>
+            <li><strong>Innovation:</strong> Staying at the forefront of technology and teaching methods</li>
+            <li><strong>Community:</strong> Building a supportive network of learners and mentors</li>
+            <li><strong>Excellence:</strong> Maintaining high standards in all our programs</li>
+          </ul>
+        </article>
+
+        <article>
+          <h3>Our Impact</h3>
+          <p>Since our inception, we've helped thousands of students discover their passion for technology, develop critical thinking skills, and prepare for careers in STEM fields. Our programs have been recognized for their innovative approach and measurable outcomes.</p>
+        </article>
+      </div>
+    </section>
   </main>
 
-  <footer>
-    <p>&copy; 2025 ByteBloom. All rights reserved.</p>
+  <footer role="contentinfo">
+    <div class="container">
+      <p>&copy; 2025 ByteBloom. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="about.html">About</a> | 
+        <a href="programs.html">Programs</a> | 
+        <a href="events.html">Events</a> | 
+        <a href="donate.html">Donate</a>
+      </p>
+    </div>
   </footer>
 </body>
 </html>

@@ -2,29 +2,76 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Support ByteBloom and help us provide technology education to more students">
   <title>ByteBloom - Donate</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Support ByteBloom</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About Us</a>
-      <a href="programs.html">Programs</a>
-      <a href="events.html">Events</a>
-      <a href="donate.html">Donate</a>
-    </nav>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header role="banner">
+    <div class="header-container">
+      <h1>Support ByteBloom</h1>
+      <nav role="navigation" aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="about.html" class="nav-link">About Us</a></li>
+          <li><a href="programs.html" class="nav-link">Programs</a></li>
+          <li><a href="events.html" class="nav-link">Events</a></li>
+          <li><a href="donate.html" class="nav-link active" aria-current="page">Donate</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <h2>Make a Donation</h2>
-    <p>Your support helps us provide tech education to more students.</p>
-    <button onclick="alert('Thank you for your donation!')">Donate Now</button>
+  <main id="main-content" role="main">
+    <section class="content-section">
+      <div class="container">
+        <h2>Make a Donation</h2>
+        <p class="lead">Your support helps us provide tech education to more students.</p>
+        
+        <article class="donation-info">
+          <h3>Why Donate?</h3>
+          <p>Every contribution helps us:</p>
+          <ul class="donation-benefits">
+            <li>Provide scholarships for underprivileged students</li>
+            <li>Purchase equipment and learning materials</li>
+            <li>Expand our programs to reach more communities</li>
+            <li>Train and support our volunteer mentors</li>
+            <li>Organize workshops and events</li>
+          </ul>
+        </article>
+
+        <div class="donation-options">
+          <h3>Donation Amounts</h3>
+          <div class="donation-buttons">
+            <button class="btn btn-donate" data-amount="25">$25</button>
+            <button class="btn btn-donate" data-amount="50">$50</button>
+            <button class="btn btn-donate" data-amount="100">$100</button>
+            <button class="btn btn-donate" data-amount="250">$250</button>
+            <button class="btn btn-donate" data-amount="custom">Custom Amount</button>
+          </div>
+          <button id="donateBtn" class="btn btn-primary btn-large">Donate Now</button>
+        </div>
+
+        <p class="donation-note">All donations are tax-deductible. We are a registered 501(c)(3) non-profit organization.</p>
+      </div>
+    </section>
   </main>
 
-  <footer>
-    <p>&copy; 2025 ByteBloom. All rights reserved.</p>
+  <footer role="contentinfo">
+    <div class="container">
+      <p>&copy; 2025 ByteBloom. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="about.html">About</a> | 
+        <a href="programs.html">Programs</a> | 
+        <a href="events.html">Events</a> | 
+        <a href="donate.html">Donate</a>
+      </p>
+    </div>
   </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
