@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ByteBloom Admin Panel - Manage Events">
+  <title>ByteBloom - Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <header role="banner">
+    <div class="header-container">
+      <h1>Admin Panel</h1>
+      <nav role="navigation" aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="events.html" class="nav-link">Events</a></li>
+          <li><a href="admin.html" class="nav-link active" aria-current="page">Admin</a></li>
+          <li><a href="#" class="nav-link" id="logoutBtn">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" role="main">
+    <section class="content-section">
+      <div class="container">
+        <h2>Event Management</h2>
+        <p class="lead">Add, edit, or remove events from the website</p>
+
+        <div class="admin-panel">
+          <div class="add-event-section">
+            <h3>Add New Event</h3>
+            <form id="addEventForm" class="event-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="eventTitle">Event Title *</label>
+                  <input 
+                    type="text" 
+                    id="eventTitle" 
+                    name="eventTitle" 
+                    required 
+                    placeholder="e.g., Coding Workshop"
+                    aria-label="Event title">
+                </div>
+
+                <div class="form-group">
+                  <label for="eventDate">Date *</label>
+                  <input 
+                    type="date" 
+                    id="eventDate" 
+                    name="eventDate" 
+                    required
+                    aria-label="Event date">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="eventTime">Time *</label>
+                  <input 
+                    type="text" 
+                    id="eventTime" 
+                    name="eventTime" 
+                    required 
+                    placeholder="e.g., 10:00 AM - 2:00 PM"
+                    aria-label="Event time">
+                </div>
+
+                <div class="form-group">
+                  <label for="eventDescription">Description *</label>
+                  <textarea 
+                    id="eventDescription" 
+                    name="eventDescription" 
+                    required 
+                    rows="3"
+                    placeholder="Describe the event..."
+                    aria-label="Event description"></textarea>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary">Add Event</button>
+            </form>
+          </div>
+
+          <div class="events-list-section">
+            <h3>Current Events</h3>
+            <div id="eventsList" class="admin-events-list">
+              <!-- Events will be dynamically loaded here -->
+            </div>
+          </div>
+        </div>
+
+          
+        
+        <!-- Programs management -->
+        <div class="admin-panel">
+          <div class="programs-management">
+            <h3>Manage Programs</h3>
+            <p class="lead">Add or remove public program offerings</p>
+
+            <div class="add-program-section">
+              <form id="addProgramForm" class="program-form">
+                <div class="form-group">
+                  <label for="programTitle">Program Title *</label>
+                  <input type="text" id="programTitle" name="programTitle" required placeholder="e.g., Coding Workshops" aria-label="Program title">
+                </div>
+                <div class="form-group">
+                  <label for="programDescription">Description *</label>
+                  <textarea id="programDescription" name="programDescription" required rows="3" placeholder="Describe the program..." aria-label="Program description"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Program</button>
+              </form>
+            </div>
+
+            <div class="programs-list-section">
+              <h4>Current Programs</h4>
+              <div id="programsList" class="admin-programs-list">
+                <!-- Programs loaded here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <div class="container">
+      <p>&copy; 2025 ByteBloom. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="about.html">About</a> | 
+        <a href="programs.html">Programs</a> | 
+        <a href="events.html">Events</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
