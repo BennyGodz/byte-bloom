@@ -486,6 +486,43 @@ footer {
 
 .login-form .btn { width: 100%; }
 
+/* Login & Admin Side-by-Side Layout */
+.login-admin-section {
+  padding: 2rem 0;
+}
+
+.login-admin-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.login-panel {
+  display: flex;
+  justify-content: center;
+}
+
+.admin-dashboard {
+  display: none;
+}
+
+.admin-dashboard.visible {
+  display: block;
+  grid-column: 1 / -1;
+}
+
+/* When admin dashboard is visible, hide login panel */
+.admin-dashboard.visible ~ .login-panel,
+.login-admin-wrapper:has(.admin-dashboard.visible) .login-panel {
+  display: none;
+}
+
+.logout-section {
+  margin-top: 2rem;
+  text-align: center;
+}
+
 /* Admin panel tweaks */
 .admin-panel { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem; }
 .admin-events-list { display: flex; flex-direction: column; gap: 1rem; }
@@ -633,4 +670,14 @@ footer {
 @media (max-width: 700px) {
   .admin-panel { padding: 0.75rem; }
   .admin-program-item { flex-direction: column; align-items: stretch; }
+
+  /* Stack login and admin panels vertically on smaller screens */
+  .login-admin-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard h2 {
+    font-size: 1.75rem;
+  }
 }
+
