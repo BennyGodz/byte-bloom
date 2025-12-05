@@ -168,28 +168,57 @@
     }
 
     // Login function
-    function directLogin() {
+    async function directLogin() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
       
-      // Encrypted credentials
-      const ADMIN_USERNAME_ENCRYPTED = 'ZGp2dX0=';
-      const ADMIN_PASSWORD_ENCRYPTED = 'ZX99cXF+woTCh8KIZWl3';
-      const decryptedUsername = decrypt(ADMIN_USERNAME_ENCRYPTED);
-      const decryptedPassword = decrypt(ADMIN_PASSWORD_ENCRYPTED);
-      
-      if (username === decryptedUsername && password === decryptedPassword) {
-        localStorage.setItem('bytebloom_auth', 'true');
-        localStorage.setItem('admin_token', 'admin-authenticated');
+      try {
+        // Use server-side authentication
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
         
-        // Show success message
-        showMessage('Login successful! Redirecting...', 'success');
+        const data = await response.json();
         
-        setTimeout(() => {
-          window.location.href = 'admin.html';
-        }, 400);
-      } else {
-        showMessage('Invalid username or password', 'error');
+        if (data.success) {
+          localStorage.setItem('bytebloom_auth', 'true');
+          localStorage.setItem('admin_token', 'admin-authenticated');
+          
+          // Show success message
+          showMessage('Login successful! Redirecting...', 'success');
+          
+          setTimeout(() => {
+            window.location.href = 'admin.html';
+          }, 400);
+        } else {
+          showMessage('Invalid username or password', 'error');
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        
+        // Fallback to client-side authentication
+        const ADMIN_USERNAME_ENCRYPTED = 'ZGp2dX0=';
+        const ADMIN_PASSWORD_ENCRYPTED = 'ZX99cXF+woTCh8KIZWl3';
+        const decryptedUsername = decrypt(ADMIN_USERNAME_ENCRYPTED);
+        const decryptedPassword = decrypt(ADMIN_PASSWORD_ENCRYPTED);
+        
+        if (username === decryptedUsername && password === decryptedPassword) {
+          localStorage.setItem('bytebloom_auth', 'true');
+          localStorage.setItem('admin_token', 'admin-authenticated');
+          
+          // Show success message
+          showMessage('Login successful! Redirecting...', 'success');
+          
+          setTimeout(() => {
+            window.location.href = 'admin.html';
+          }, 400);
+        } else {
+          showMessage('Invalid username or password', 'error');
+        }
       }
     }
     

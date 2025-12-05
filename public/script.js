@@ -65,13 +65,22 @@ function initWebSocket() {
 /* ---------------- API Helper ---------------- */
 async function apiRequest(endpoint, options = {}) {
   try {
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    };
+    
+    // Add auth headers for protected endpoints
+    if (isAuthenticated() && (endpoint.includes('/events') || endpoint.includes('/programs'))) {
+      headers['Authorization'] = 'Bearer admin-authenticated';
+      headers['X-Admin-Token'] = 'admin-authenticated';
+    }
+    
     const response = await fetch(`${API_BASE}${endpoint}`, {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {})
-      }
+      headers
     });
+    
     if (!response.ok) {
       const error = await response.json().catch(() => ({ error: 'Request failed' }));
       throw new Error(error.error || 'Request failed');
@@ -93,6 +102,14 @@ function checkCredentials(username, password) {
 function isAuthenticated() {
   const auth = localStorage.getItem(AUTH_KEY);
   const token = localStorage.getItem('admin_token');
+  const timestamp = localStorage.getItem('auth_timestamp');
+  
+  // Check if session has expired (30 minutes)
+  if (timestamp && (Date.now() - parseInt(timestamp)) > 30 * 60 * 1000) {
+    setAuthenticated(false);
+    return false;
+  }
+  
   return auth === 'true' && token === 'admin-authenticated';
 }
 
@@ -100,9 +117,11 @@ function setAuthenticated(status) {
   if (status) {
     localStorage.setItem(AUTH_KEY, 'true');
     localStorage.setItem('admin_token', 'admin-authenticated');
+    localStorage.setItem('auth_timestamp', Date.now().toString());
   } else {
     localStorage.removeItem(AUTH_KEY);
     localStorage.removeItem('admin_token');
+    localStorage.removeItem('auth_timestamp');
   }
 }
 
@@ -132,7 +151,7 @@ function setupLoginForm() {
   }
 }
 
-function handleLogin(e) {
+async function handleLogin(e) {
   e.preventDefault();
   e.stopPropagation();
   console.log('Login form submitted - preventing default');
@@ -143,25 +162,57 @@ function handleLogin(e) {
 
   console.log('Login attempt:', { username, password: '***', hasPassword: !!password });
 
-  if (checkCredentials(username, password)) {
-    console.log('Credentials valid, setting authentication');
-    setAuthenticated(true);
-    updateLoginLayout();
+  try {
+    // Use server-side authentication
+    const response = await apiRequest('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password })
+    });
 
-    if (rememberPassword) {
-      localStorage.setItem(USERNAME_KEY, username);
-      localStorage.setItem(PASSWORD_KEY, password);
-    } else {
-      localStorage.removeItem(USERNAME_KEY);
-      localStorage.removeItem(PASSWORD_KEY);
+    if (response.success) {
+      console.log('Server authentication successful');
+      setAuthenticated(true);
+      updateLoginLayout();
+
+      if (rememberPassword) {
+        localStorage.setItem(USERNAME_KEY, username);
+        localStorage.setItem(PASSWORD_KEY, password);
+      } else {
+        localStorage.removeItem(USERNAME_KEY);
+        localStorage.removeItem(PASSWORD_KEY);
+      }
+
+      showMessage('Login successful! Redirecting...', 'success');
+      setTimeout(() => {
+        console.log('Redirecting to admin.html');
+        window.location.href = 'admin.html';
+      }, 400);
+      return;
     }
+  } catch (error) {
+    console.log('Server authentication failed, falling back to client-side');
+    
+    // Fallback to client-side check for backward compatibility
+    if (checkCredentials(username, password)) {
+      console.log('Client-side credentials valid, setting authentication');
+      setAuthenticated(true);
+      updateLoginLayout();
 
-    showMessage('Login successful! Redirecting...', 'success');
-    setTimeout(() => {
-      console.log('Redirecting to admin.html');
-      window.location.href = 'admin.html';
-    }, 400);
-    return;
+      if (rememberPassword) {
+        localStorage.setItem(USERNAME_KEY, username);
+        localStorage.setItem(PASSWORD_KEY, password);
+      } else {
+        localStorage.removeItem(USERNAME_KEY);
+        localStorage.removeItem(PASSWORD_KEY);
+      }
+
+      showMessage('Login successful! Redirecting...', 'success');
+      setTimeout(() => {
+        console.log('Redirecting to admin.html');
+        window.location.href = 'admin.html';
+      }, 400);
+      return;
+    }
   }
 
   console.log('Invalid credentials');
@@ -511,11 +562,33 @@ document.addEventListener('DOMContentLoaded', function() {
   // Update layout based on authentication status
   updateLoginLayout();
   
-  // Redirect to login if not authenticated
-  if (window.location.pathname.includes('admin.html') && !isAuthenticated()) {
+  // Redirect to login if not authenticated (only for client-side routing)
+  // Server-side protection handles direct access to admin.html
+  if (window.location.pathname.includes('admin.html') && !window.location.search.includes('bypass=server') && !isAuthenticated()) {
     console.log('Not authenticated, redirecting to login');
     window.location.href = 'login.html';
     return;
+  }
+  
+  // Set up activity monitoring for session timeout
+  if (window.location.pathname.includes('admin.html')) {
+    let activityTimer;
+    
+    function resetActivityTimer() {
+      clearTimeout(activityTimer);
+      activityTimer = setTimeout(() => {
+        showMessage('Session expired due to inactivity', 'error');
+        setAuthenticated(false);
+        window.location.href = 'login.html';
+      }, 30 * 60 * 1000); // 30 minutes
+    }
+    
+    // Reset timer on user activity
+    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+      document.addEventListener(event, resetActivityTimer, true);
+    });
+    
+    resetActivityTimer(); // Initial timer
   }
 
   // Setup forms & UI

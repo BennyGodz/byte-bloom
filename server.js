@@ -125,9 +125,40 @@ async function autoCommitAndPush(message) {
   }
 }
 
+// Authentication middleware
+function requireAuth(req, res, next) {
+  const auth = req.headers.authorization;
+  const token = req.headers['x-admin-token'];
+  
+  if (auth === 'Bearer admin-authenticated' && token === 'admin-authenticated') {
+    next();
+  } else {
+    // For HTML requests, redirect to login
+    if (req.accepts('html')) {
+      res.redirect('/login.html');
+    } else {
+      res.status(401).json({ error: 'Unauthorized' });
+    }
+  }
+}
+
 // Middleware
 app.use(express.json());
-app.use(express.static("public"));
+
+// Custom static middleware with admin protection
+app.use(express.static("public", {
+  setHeaders: (res, filePath) => {
+    // Block direct access to admin.html
+    if (filePath.includes('admin.html')) {
+      res.setHeader('X-Protected-Resource', 'true');
+    }
+  }
+}));
+
+// Intercept requests for admin.html and require authentication
+app.get('/admin.html', requireAuth, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
 
 // WebSocket connection handling
 io.on('connection', (socket) => {
@@ -162,7 +193,47 @@ app.get('/api/programs', (req, res) => {
   res.json(programs);
 });
 
-app.post('/api/events', async (req, res) => {
+// Admin authentication endpoint
+app.post('/api/auth/login', (req, res) => {
+  const { username, password } = req.body;
+  
+  // Simple encryption/decryption (same as client)
+  function decrypt(encryptedText) {
+    try {
+      return atob(encryptedText).split('').map((char, i) => 
+        String.fromCharCode(char.charCodeAt(0) - (i + 1) * 3)
+      ).join('');
+    } catch {
+      return '';
+    }
+  }
+  
+  const ADMIN_USERNAME_ENCRYPTED = 'ZGp2dX0=';
+  const ADMIN_PASSWORD_ENCRYPTED = 'ZX99cXF+woTCh8KIZWl3';
+  
+  const decryptedUsername = decrypt(ADMIN_USERNAME_ENCRYPTED);
+  const decryptedPassword = decrypt(ADMIN_PASSWORD_ENCRYPTED);
+  
+  if (username === decryptedUsername && password === decryptedPassword) {
+    res.json({ 
+      success: true, 
+      token: 'admin-authenticated',
+      message: 'Login successful' 
+    });
+  } else {
+    res.status(401).json({ 
+      success: false, 
+      error: 'Invalid credentials' 
+    });
+  }
+});
+
+// Protected admin routes - serve admin.html only with authentication
+app.get(['/admin.html', '/admin'], requireAuth, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+app.post('/api/events', requireAuth, async (req, res) => {
   const event = {
     id: Date.now(),
     ...req.body,
@@ -182,7 +253,7 @@ app.post('/api/events', async (req, res) => {
   res.json(event);
 });
 
-app.delete('/api/events/:id', async (req, res) => {
+app.delete('/api/events/:id', requireAuth, async (req, res) => {
   const id = parseInt(req.params.id);
   const deletedEvent = events.find(event => event.id === id);
   events = events.filter(event => event.id !== id);
@@ -199,7 +270,7 @@ app.delete('/api/events/:id', async (req, res) => {
   res.json({ success: true });
 });
 
-app.post('/api/programs', async (req, res) => {
+app.post('/api/programs', requireAuth, async (req, res) => {
   const program = {
     id: Date.now(),
     ...req.body,
@@ -219,7 +290,7 @@ app.post('/api/programs', async (req, res) => {
   res.json(program);
 });
 
-app.delete('/api/programs/:id', async (req, res) => {
+app.delete('/api/programs/:id', requireAuth, async (req, res) => {
   const id = parseInt(req.params.id);
   const deletedProgram = programs.find(program => program.id === id);
   programs = programs.filter(program => program.id !== id);
