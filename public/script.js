@@ -55,6 +55,11 @@ function initWebSocket() {
       updatePublicPrograms(data);
     }
   });
+  
+  socket.on('admin-notification', (data) => {
+    console.log('Admin notification:', data);
+    showAdminNotification(data.message, data.type);
+  });
 }
 
 /* ---------------- API Helper ---------------- */
@@ -211,6 +216,29 @@ function showMessage(message, type = 'info') {
   }, 5000);
 }
 
+function showAdminNotification(message, type = 'info') {
+  // Only show notifications if user is on admin page
+  if (!window.location.pathname.includes('admin.html')) return;
+  
+  const existing = document.querySelector('.admin-notification');
+  if (existing) existing.remove();
+
+  const el = document.createElement('div');
+  el.className = `admin-notification admin-notification-${type}`;
+  el.innerHTML = `
+    <div class="notification-content">
+      <span class="notification-icon">🔄</span>
+      <span class="notification-text">${message}</span>
+    </div>
+  `;
+  document.body.appendChild(el);
+
+  setTimeout(() => {
+    el.classList.add('admin-notification-hiding');
+    setTimeout(() => el.remove(), 3000);
+  }, 4000);
+}
+
 /* ---------------- Event Management ---------------- */
 function setupEventForm() {
   const form = document.getElementById('addEventForm');
@@ -232,6 +260,14 @@ function setupEventForm() {
         body: JSON.stringify(eventData)
       });
       
+      // Notify other admin users
+      if (socket) {
+        socket.emit('admin-action', {
+          type: 'event-added',
+          message: `New event added: ${eventData.title}`
+        });
+      }
+      
       showMessage('Event added successfully!', 'success');
       form.reset();
     } catch (error) {
@@ -250,9 +286,9 @@ function updateEventsList(events) {
   }
 
   eventsList.innerHTML = events.map(event => `
-    <div class="event-item" data-id="${event.id}">
+    <div class="event-item" data-event-id="${event.id}">
       <div class="event-header">
-        <h4>${event.title}</h4>
+        <h4 class="event-title">${event.title}</h4>
         <button class="btn-delete" onclick="deleteEvent(${event.id})">×</button>
       </div>
       <div class="event-details">
@@ -268,7 +304,20 @@ async function deleteEvent(id) {
   if (!confirm('Are you sure you want to delete this event?')) return;
 
   try {
+    // Get event title for notification
+    const eventElement = document.querySelector(`[data-event-id="${id}"] .event-title`);
+    const eventTitle = eventElement ? eventElement.textContent : 'Event';
+    
     await apiRequest(`/events/${id}`, { method: 'DELETE' });
+    
+    // Notify other admin users
+    if (socket) {
+      socket.emit('admin-action', {
+        type: 'event-deleted',
+        message: `Event deleted: ${eventTitle}`
+      });
+    }
+    
     showMessage('Event deleted successfully!', 'success');
   } catch (error) {
     showMessage('Failed to delete event: ' + error.message, 'error');
@@ -294,6 +343,14 @@ function setupProgramForm() {
         body: JSON.stringify(programData)
       });
       
+      // Notify other admin users
+      if (socket) {
+        socket.emit('admin-action', {
+          type: 'program-added',
+          message: `New program added: ${programData.title}`
+        });
+      }
+      
       showMessage('Program added successfully!', 'success');
       form.reset();
     } catch (error) {
@@ -312,9 +369,9 @@ function updateProgramsList(programs) {
   }
 
   programsList.innerHTML = programs.map(program => `
-    <div class="program-item" data-id="${program.id}">
+    <div class="program-item" data-program-id="${program.id}">
       <div class="program-header">
-        <h4>${program.title}</h4>
+        <h4 class="program-title">${program.title}</h4>
         <button class="btn-delete" onclick="deleteProgram(${program.id})">×</button>
       </div>
       <div class="program-details">
@@ -385,7 +442,20 @@ async function deleteProgram(id) {
   if (!confirm('Are you sure you want to delete this program?')) return;
 
   try {
+    // Get program title for notification
+    const programElement = document.querySelector(`[data-program-id="${id}"] .program-title`);
+    const programTitle = programElement ? programElement.textContent : 'Program';
+    
     await apiRequest(`/programs/${id}`, { method: 'DELETE' });
+    
+    // Notify other admin users
+    if (socket) {
+      socket.emit('admin-action', {
+        type: 'program-deleted',
+        message: `Program deleted: ${programTitle}`
+      });
+    }
+    
     showMessage('Program deleted successfully!', 'success');
   } catch (error) {
     showMessage('Failed to delete program: ' + error.message, 'error');

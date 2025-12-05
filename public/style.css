@@ -845,6 +845,48 @@ footer {
   }
 }
 
+/* Admin Notifications */
+.admin-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  max-width: 300px;
+  transform: translateX(0);
+  transition: all 0.3s ease;
+}
+
+.admin-notification.admin-notification-hiding {
+  transform: translateX(400px);
+  opacity: 0;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-icon {
+  font-size: 16px;
+  animation: spin 2s linear infinite;
+}
+
+.notification-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* Additional Admin Panel & Login utilities */
 .admin-programs-list { display: flex; flex-direction: column; gap: 0.75rem; }
 .admin-program-item { background: #fafafa; border: 1px solid var(--light-gray); padding: 0.9rem; border-radius: 8px; display:flex; justify-content:space-between; align-items:flex-start; gap:0.75rem; }

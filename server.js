@@ -79,23 +79,49 @@ async function savePrograms() {
   }
 }
 
-// Auto-commit and push changes
+// Auto-commit and push changes (server-side only)
 async function autoCommitAndPush(message) {
   try {
     console.log('Committing and pushing changes...');
     
+    // Check if we're in a git repository
+    const isRepo = await git.checkIsRepo();
+    if (!isRepo) {
+      console.log('Not in a git repository, skipping auto-commit');
+      return;
+    }
+    
+    // Check if remote exists
+    try {
+      await git.getRemotes(true);
+    } catch {
+      console.log('No remote configured, skipping auto-push');
+      return;
+    }
+    
     // Add all changes
     await git.add('.');
+    
+    // Check if there are changes to commit
+    const status = await git.status();
+    if (status.files.length === 0) {
+      console.log('No changes to commit');
+      return;
+    }
     
     // Commit with message
     await git.commit(message);
     
-    // Push to remote
-    await git.push();
-    
-    console.log('Changes committed and pushed successfully');
+    // Push to remote (with error handling for no remote or auth issues)
+    try {
+      await git.push();
+      console.log('Changes committed and pushed successfully');
+    } catch (pushError) {
+      console.log('Changes committed, but push failed:', pushError.message);
+      console.log('This is normal if git credentials are not configured');
+    }
   } catch (error) {
-    console.error('Error in auto-commit and push:', error);
+    console.error('Error in auto-commit and push:', error.message);
   }
 }
 
@@ -110,6 +136,17 @@ io.on('connection', (socket) => {
   // Send current data to new client
   socket.emit('events-update', events);
   socket.emit('programs-update', programs);
+  
+  // Handle admin status notifications
+  socket.on('admin-action', (data) => {
+    console.log('Admin action:', data);
+    // Broadcast to all other clients except sender
+    socket.broadcast.emit('admin-notification', {
+      type: data.type,
+      message: data.message,
+      timestamp: new Date().toISOString()
+    });
+  });
   
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
