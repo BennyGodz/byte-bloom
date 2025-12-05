@@ -3,10 +3,12 @@ const http = require("http");
 const socketIo = require("socket.io");
 const fs = require("fs").promises;
 const path = require("path");
+const simpleGit = require('simple-git');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 const PORT = process.env.PORT || 8080;
+const git = simpleGit();
 
 // Data files
 const EVENTS_FILE = path.join(__dirname, 'data', 'events.json');
@@ -77,6 +79,26 @@ async function savePrograms() {
   }
 }
 
+// Auto-commit and push changes
+async function autoCommitAndPush(message) {
+  try {
+    console.log('Committing and pushing changes...');
+    
+    // Add all changes
+    await git.add('.');
+    
+    // Commit with message
+    await git.commit(message);
+    
+    // Push to remote
+    await git.push();
+    
+    console.log('Changes committed and pushed successfully');
+  } catch (error) {
+    console.error('Error in auto-commit and push:', error);
+  }
+}
+
 // Middleware
 app.use(express.json());
 app.use(express.static("public"));
@@ -114,6 +136,9 @@ app.post('/api/events', async (req, res) => {
   // Save to file
   await saveEvents();
   
+  // Auto-commit and push
+  await autoCommitAndPush(`Add event: ${event.title || 'New event'}`);
+  
   // Broadcast to all clients
   io.emit('events-update', events);
   
@@ -122,10 +147,14 @@ app.post('/api/events', async (req, res) => {
 
 app.delete('/api/events/:id', async (req, res) => {
   const id = parseInt(req.params.id);
+  const deletedEvent = events.find(event => event.id === id);
   events = events.filter(event => event.id !== id);
   
   // Save to file
   await saveEvents();
+  
+  // Auto-commit and push
+  await autoCommitAndPush(`Delete event: ${deletedEvent?.title || 'Event'}`);
   
   // Broadcast to all clients
   io.emit('events-update', events);
@@ -144,6 +173,9 @@ app.post('/api/programs', async (req, res) => {
   // Save to file
   await savePrograms();
   
+  // Auto-commit and push
+  await autoCommitAndPush(`Add program: ${program.title || 'New program'}`);
+  
   // Broadcast to all clients
   io.emit('programs-update', programs);
   
@@ -152,10 +184,14 @@ app.post('/api/programs', async (req, res) => {
 
 app.delete('/api/programs/:id', async (req, res) => {
   const id = parseInt(req.params.id);
+  const deletedProgram = programs.find(program => program.id === id);
   programs = programs.filter(program => program.id !== id);
   
   // Save to file
   await savePrograms();
+  
+  // Auto-commit and push
+  await autoCommitAndPush(`Delete program: ${deletedProgram?.title || 'Program'}`);
   
   // Broadcast to all clients
   io.emit('programs-update', programs);
