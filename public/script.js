@@ -26,7 +26,7 @@ function decrypt(encryptedText) {
 }
 
 // Admin credentials (encrypted)
-const ADMIN_USERNAME = 'admin';
+const ADMIN_USERNAME_ENCRYPTED = 'dgmob';
 const ADMIN_PASSWORD_ENCRYPTED = 'ZX99cXF+hIeIZWl3';
 
 // WebSocket connection
@@ -85,8 +85,9 @@ async function apiRequest(endpoint, options = {}) {
 
 /* ---------------- Authentication ---------------- */
 function checkCredentials(username, password) {
+  const decryptedUsername = decrypt(ADMIN_USERNAME_ENCRYPTED);
   const decryptedPassword = decrypt(ADMIN_PASSWORD_ENCRYPTED);
-  return username === ADMIN_USERNAME && password === decryptedPassword;
+  return username === decryptedUsername && password === decryptedPassword;
 }
 
 function isAuthenticated() {
