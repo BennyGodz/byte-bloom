@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1764891132961,
+    "title": "Shared Event Test",
+    "date": "2025-12-06",
+    "time": "3PM",
+    "description": "This should be visible to all devices",
+    "createdAt": "2025-12-04T23:32:12.961Z"
+  },
+  {
+    "id": 1764891603900,
+    "title": "test",
+    "date": "2025-12-05",
+    "time": "10AM - 1PM",
+    "description": "test",
+    "createdAt": "2025-12-04T23:40:03.900Z"
+  },
+  {
+    "id": 1764892429224,
+    "title": "Public Test Event",
+    "date": "2025-12-07",
+    "time": "5PM",
+    "description": "This should appear on public events page",
+    "createdAt": "2025-12-04T23:53:49.224Z"
+  },
+  {
+    "id": 1764892775705,
+    "title": "Real-time Test",
+    "date": "2025-12-08",
+    "time": "6PM",
+    "description": "This should appear instantly on all devices",
+    "createdAt": "2025-12-04T23:59:35.705Z"
+  }
+]

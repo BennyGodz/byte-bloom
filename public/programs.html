@@ -31,11 +31,9 @@
         <h2>What We Offer</h2>
         <p class="lead">Comprehensive technology education programs designed for students of all skill levels.</p>
         
-        <div class="programs-grid">
-          <div class="no-programs">
-            <p>Public program listings are currently managed by administrators and are not displayed here.</p>
-            <p>If you are an administrator, manage program offerings from the <a href="admin.html">Admin Panel</a>.</p>
-          </div>
+<div class="programs-grid" id="programsGrid">
+          <!-- Programs will be dynamically loaded here -->
+        </div>
         </div>
       </div>
     </section>
@@ -52,6 +50,7 @@
     </div>
   </footer>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

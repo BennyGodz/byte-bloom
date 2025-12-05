@@ -16,6 +16,8 @@
       <nav role="navigation" aria-label="Main navigation">
         <ul class="nav-list">
           <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="about.html" class="nav-link">About Us</a></li>
+          <li><a href="programs.html" class="nav-link">Programs</a></li>
           <li><a href="events.html" class="nav-link">Events</a></li>
           <li><a href="admin.html" class="nav-link active" aria-current="page">Admin</a></li>
           <li><a href="#" class="nav-link" id="logoutBtn">Logout</a></li>
@@ -24,101 +26,110 @@
     </div>
   </header>
 
-  <main id="main-content" role="main">
+<main id="main-content" role="main">
     <section class="content-section">
       <div class="container">
-        <h2>Event Management</h2>
-        <p class="lead">Add, edit, or remove events from the website</p>
+        <h2>Admin Panel</h2>
+        <p class="lead">Manage events and programs</p>
 
-        <div class="admin-panel">
-          <div class="add-event-section">
-            <h3>Add New Event</h3>
-            <form id="addEventForm" class="event-form">
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="eventTitle">Event Title *</label>
-                  <input 
-                    type="text" 
-                    id="eventTitle" 
-                    name="eventTitle" 
-                    required 
-                    placeholder="e.g., Coding Workshop"
-                    aria-label="Event title">
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+          <button class="tab-button active" data-tab="events">Events</button>
+          <button class="tab-button" data-tab="programs">Programs</button>
+        </div>
+
+        <!-- Events Tab -->
+        <div class="tab-content active" data-tab="events">
+          <div class="admin-panel">
+            <div class="add-event-section">
+              <h3>Add New Event</h3>
+              <form id="addEventForm" class="event-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="eventTitle">Event Title *</label>
+                    <input 
+                      type="text" 
+                      id="eventTitle" 
+                      name="eventTitle" 
+                      required 
+                      placeholder="e.g., Coding Workshop"
+                      aria-label="Event title">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="eventDate">Date *</label>
+                    <input 
+                      type="date" 
+                      id="eventDate" 
+                      name="eventDate" 
+                      required
+                      aria-label="Event date">
+                  </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="eventDate">Date *</label>
-                  <input 
-                    type="date" 
-                    id="eventDate" 
-                    name="eventDate" 
-                    required
-                    aria-label="Event date">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="eventTime">Time *</label>
+                    <input 
+                      type="text" 
+                      id="eventTime" 
+                      name="eventTime" 
+                      required 
+                      placeholder="e.g., 10:00 AM - 2:00 PM"
+                      aria-label="Event time">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="eventDescription">Description *</label>
+                    <textarea 
+                      id="eventDescription" 
+                      name="eventDescription" 
+                      required 
+                      rows="3"
+                      placeholder="Describe the event..."
+                      aria-label="Event description"></textarea>
+                  </div>
                 </div>
+
+                <button type="submit" class="btn btn-primary">Add Event</button>
+              </form>
+            </div>
+
+            <div class="events-list-section">
+              <h3>Current Events</h3>
+              <div id="eventsList" class="admin-events-list">
+                <!-- Events will be dynamically loaded here -->
               </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="eventTime">Time *</label>
-                  <input 
-                    type="text" 
-                    id="eventTime" 
-                    name="eventTime" 
-                    required 
-                    placeholder="e.g., 10:00 AM - 2:00 PM"
-                    aria-label="Event time">
-                </div>
-
-                <div class="form-group">
-                  <label for="eventDescription">Description *</label>
-                  <textarea 
-                    id="eventDescription" 
-                    name="eventDescription" 
-                    required 
-                    rows="3"
-                    placeholder="Describe the event..."
-                    aria-label="Event description"></textarea>
-                </div>
-              </div>
-
-              <button type="submit" class="btn btn-primary">Add Event</button>
-            </form>
-          </div>
-
-          <div class="events-list-section">
-            <h3>Current Events</h3>
-            <div id="eventsList" class="admin-events-list">
-              <!-- Events will be dynamically loaded here -->
             </div>
           </div>
         </div>
 
-          
-        
-        <!-- Programs management -->
-        <div class="admin-panel">
-          <div class="programs-management">
-            <h3>Manage Programs</h3>
-            <p class="lead">Add or remove public program offerings</p>
+        <!-- Programs Tab -->
+        <div class="tab-content" data-tab="programs">
+          <div class="admin-panel">
+            <div class="programs-management">
+              <h3>Manage Programs</h3>
+              <p class="lead">Add or remove public program offerings</p>
 
-            <div class="add-program-section">
-              <form id="addProgramForm" class="program-form">
-                <div class="form-group">
-                  <label for="programTitle">Program Title *</label>
-                  <input type="text" id="programTitle" name="programTitle" required placeholder="e.g., Coding Workshops" aria-label="Program title">
-                </div>
-                <div class="form-group">
-                  <label for="programDescription">Description *</label>
-                  <textarea id="programDescription" name="programDescription" required rows="3" placeholder="Describe the program..." aria-label="Program description"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Add Program</button>
-              </form>
-            </div>
+              <div class="add-program-section">
+                <form id="addProgramForm" class="program-form">
+                  <div class="form-group">
+                    <label for="programTitle">Program Title *</label>
+                    <input type="text" id="programTitle" name="programTitle" required placeholder="e.g., Coding Workshops" aria-label="Program title">
+                  </div>
+                  <div class="form-group">
+                    <label for="programDescription">Description *</label>
+                    <textarea id="programDescription" name="programDescription" required rows="3" placeholder="Describe the program..." aria-label="Program description"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Add Program</button>
+                </form>
+              </div>
 
-            <div class="programs-list-section">
-              <h4>Current Programs</h4>
-              <div id="programsList" class="admin-programs-list">
-                <!-- Programs loaded here -->
+              <div class="programs-list-section">
+                <h4>Current Programs</h4>
+                <div id="programsList" class="admin-programs-list">
+                  <!-- Programs loaded here -->
+                </div>
               </div>
             </div>
           </div>
@@ -148,6 +159,7 @@
       }
     })();
   </script>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

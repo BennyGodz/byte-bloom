@@ -35,7 +35,7 @@
               <h2>Admin Login</h2>
               <p class="login-subtitle">Sign in to manage events and content</p>
               
-              <form id="loginForm" class="login-form">
+              <form id="loginForm" class="login-form" onsubmit="console.log('Form onsubmit triggered'); return false;">
                 <div class="form-group">
                   <label for="username">Username</label>
                   <input 
@@ -79,15 +79,10 @@
                   </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-large btn-block">Sign In</button>
+                <button type="button" onclick="directLogin()" class="btn btn-primary btn-large btn-block">Sign In</button>
               </form>
 
-              <div class="login-info">
-                <p class="info-note">
-                  <strong>Note:</strong> Password saving uses browser localStorage and will only work on this device. 
-                  For cross-computer access, a backend database would be required.
-                </p>
-              </div>
+
             </div>
           </div>
 
@@ -108,6 +103,101 @@
     </div>
   </footer>
 
+<script>
+    // Simple encryption/decryption functions
+    function encrypt(text) {
+      return btoa(text.split('').map((char, i) => 
+        String.fromCharCode(char.charCodeAt(0) + (i + 1) * 3)
+      ).join(''));
+    }
+
+    function decrypt(encryptedText) {
+      try {
+        return atob(encryptedText).split('').map((char, i) => 
+          String.fromCharCode(char.charCodeAt(0) - (i + 1) * 3)
+        ).join('');
+      } catch {
+        return '';
+      }
+    }
+
+    // Password visibility toggle
+    function setupPasswordToggle() {
+      const passwordInput = document.getElementById('password');
+      const toggleButton = document.getElementById('passwordToggle');
+      const eyeIcon = document.getElementById('eyeIcon');
+      
+      if (!passwordInput || !toggleButton || !eyeIcon) return;
+      
+      let isVisible = false;
+      
+      // Draw eye icon (closed by default)
+      function drawEye(open) {
+        const ctx = eyeIcon.getContext('2d');
+        ctx.clearRect(0, 0, 24, 24);
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 2;
+        
+        if (open) {
+          // Open eye
+          ctx.beginPath();
+          ctx.arc(12, 12, 8, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(12, 12, 3, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          // Closed eye (slash through)
+          ctx.beginPath();
+          ctx.arc(12, 12, 8, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(6, 6);
+          ctx.lineTo(18, 18);
+          ctx.stroke();
+        }
+      }
+      
+      // Initialize with closed eye
+      drawEye(false);
+      
+      toggleButton.addEventListener('click', function() {
+        isVisible = !isVisible;
+        passwordInput.type = isVisible ? 'text' : 'password';
+        drawEye(isVisible);
+      });
+    }
+
+    // Login function
+    function directLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      
+      // Encrypted credentials
+      const ADMIN_USERNAME = 'admin';
+      const ADMIN_PASSWORD_ENCRYPTED = 'ZX99cXF+hIeIZWl3';
+      const decryptedPassword = decrypt(ADMIN_PASSWORD_ENCRYPTED);
+      
+      if (username === ADMIN_USERNAME && password === decryptedPassword) {
+        localStorage.setItem('bytebloom_auth', 'true');
+        localStorage.setItem('admin_token', 'admin-authenticated');
+        
+        // Show success message
+        showMessage('Login successful! Redirecting...', 'success');
+        
+        setTimeout(() => {
+          window.location.href = 'admin.html';
+        }, 400);
+      } else {
+        showMessage('Invalid username or password', 'error');
+      }
+    }
+    
+    // Initialize password toggle on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      setupPasswordToggle();
+    });
+  </script>
   <script src="script.js"></script>
 </body>
 </html>
