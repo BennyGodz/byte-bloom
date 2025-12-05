@@ -4,6 +4,7 @@
   },
   "deploy": {
     "startCommand": "npm start",
-    "healthcheckPath": "/api/events"
+    "healthcheckPath": "/api/events",
+    "port": 8080
   }
 }
