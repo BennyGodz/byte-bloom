@@ -164,7 +164,7 @@ app.delete('/api/programs/:id', async (req, res) => {
 });
 
 // Start server and load data
-server.listen(PORT, async () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', async () => {
+  console.log(`Server running on port ${PORT}`);
   await loadData();
 });
