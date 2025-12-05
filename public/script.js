@@ -26,8 +26,8 @@ function decrypt(encryptedText) {
 }
 
 // Admin credentials (encrypted)
-const ADMIN_USERNAME_ENCRYPTED = 'dgmob';
-const ADMIN_PASSWORD_ENCRYPTED = 'ZX99cXF+hIeIZWl3';
+const ADMIN_USERNAME_ENCRYPTED = 'ZGp2dX0=';
+const ADMIN_PASSWORD_ENCRYPTED = 'ZX99cXF+woTCh8KIZWl3';
 
 // WebSocket connection
 let socket = null;
