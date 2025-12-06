@@ -172,7 +172,8 @@ async function handleLogin(e) {
     if (response.success) {
       console.log('Server authentication successful');
       setAuthenticated(true);
-      updateLoginLayout();
+      // Delay layout update until after redirect
+      // updateLoginLayout();
 
       if (rememberPassword) {
         localStorage.setItem(USERNAME_KEY, username);
@@ -196,7 +197,8 @@ async function handleLogin(e) {
     if (checkCredentials(username, password)) {
       console.log('Client-side credentials valid, setting authentication');
       setAuthenticated(true);
-      updateLoginLayout();
+      // Delay layout update until after redirect
+      // updateLoginLayout();
 
       if (rememberPassword) {
         localStorage.setItem(USERNAME_KEY, username);
@@ -242,8 +244,16 @@ function setupLogout() {
   const logoutBtn = document.getElementById('logoutBtn');
   if (!logoutBtn) return;
 
-  logoutBtn.addEventListener('click', function(e) {
+  logoutBtn.addEventListener('click', async function(e) {
     e.preventDefault();
+    
+    try {
+      // Call server logout endpoint to clear cookie
+      await apiRequest('/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+    
     setAuthenticated(false);
     showMessage('Logged out successfully', 'success');
     setTimeout(() => {
@@ -262,9 +272,13 @@ function showMessage(message, type = 'info') {
   el.textContent = message;
   document.body.appendChild(el);
 
+  // Trigger animation
+  setTimeout(() => el.classList.add('show'), 10);
+
   setTimeout(() => {
+    el.classList.remove('show');
     el.classList.add('message-toast-hiding');
-    setTimeout(() => el.remove(), 300);
+    setTimeout(() => el.remove(), 500);
   }, 5000);
 }
 
@@ -553,6 +567,12 @@ function updateLoginLayout() {
 }
 
 /* ---------------- Initialize App ---------------- */
+// Immediate protection for admin page
+if (window.location.pathname.includes('admin.html') && !isAuthenticated()) {
+  console.log('Not authenticated, redirecting to login immediately');
+  window.location.href = 'login.html';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('DOM Content Loaded - Initializing ByteBloom');
   
@@ -564,7 +584,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Redirect to login if not authenticated (only for client-side routing)
   // Server-side protection handles direct access to admin.html
-  if (window.location.pathname.includes('admin.html') && !window.location.search.includes('bypass=server') && !isAuthenticated()) {
+  if (window.location.pathname.includes('admin.html') && !isAuthenticated()) {
     console.log('Not authenticated, redirecting to login');
     window.location.href = 'login.html';
     return;

@@ -4,6 +4,7 @@ const socketIo = require("socket.io");
 const fs = require("fs").promises;
 const path = require("path");
 const simpleGit = require('simple-git');
+const cookieParser = require('cookie-parser');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
@@ -130,7 +131,11 @@ function requireAuth(req, res, next) {
   const auth = req.headers.authorization;
   const token = req.headers['x-admin-token'];
   
-  if (auth === 'Bearer admin-authenticated' && token === 'admin-authenticated') {
+  // Check for session cookie as fallback for page requests
+  const sessionToken = req.cookies?.admin_session;
+  
+  if ((auth === 'Bearer admin-authenticated' && token === 'admin-authenticated') || 
+      sessionToken === 'admin-authenticated') {
     next();
   } else {
     // For HTML requests, redirect to login
@@ -144,21 +149,21 @@ function requireAuth(req, res, next) {
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 
-// Custom static middleware with admin protection
-app.use(express.static("public", {
-  setHeaders: (res, filePath) => {
-    // Block direct access to admin.html
-    if (filePath.includes('admin.html')) {
-      res.setHeader('X-Protected-Resource', 'true');
-    }
-  }
-}));
-
-// Intercept requests for admin.html and require authentication
+// Protect admin.html before static middleware
 app.get('/admin.html', requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
+
+// Also protect /admin route
+app.get('/admin', requireAuth, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+app.use(express.static("public"));
+
+
 
 // WebSocket connection handling
 io.on('connection', (socket) => {
@@ -200,7 +205,7 @@ app.post('/api/auth/login', (req, res) => {
   // Simple encryption/decryption (same as client)
   function decrypt(encryptedText) {
     try {
-      return atob(encryptedText).split('').map((char, i) => 
+      return Buffer.from(encryptedText, 'base64').toString('utf8').split('').map((char, i) => 
         String.fromCharCode(char.charCodeAt(0) - (i + 1) * 3)
       ).join('');
     } catch {
@@ -215,6 +220,14 @@ app.post('/api/auth/login', (req, res) => {
   const decryptedPassword = decrypt(ADMIN_PASSWORD_ENCRYPTED);
   
   if (username === decryptedUsername && password === decryptedPassword) {
+    // Set session cookie
+    res.cookie('admin_session', 'admin-authenticated', { 
+      maxAge: 30 * 60 * 1000, // 30 minutes
+      httpOnly: true,
+      secure: false, // Set to true in production with HTTPS
+      sameSite: 'lax'
+    });
+    
     res.json({ 
       success: true, 
       token: 'admin-authenticated',
@@ -228,9 +241,10 @@ app.post('/api/auth/login', (req, res) => {
   }
 });
 
-// Protected admin routes - serve admin.html only with authentication
-app.get(['/admin.html', '/admin'], requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+// Admin logout endpoint
+app.post('/api/auth/logout', (req, res) => {
+  res.clearCookie('admin_session');
+  res.json({ success: true, message: 'Logged out successfully' });
 });
 
 app.post('/api/events', requireAuth, async (req, res) => {

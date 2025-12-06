@@ -18,7 +18,9 @@
   --light-gray: #e0e0e0;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
-  --transition: all 0.3s ease;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* Tab Styles */
@@ -26,6 +28,7 @@
   display: flex;
   border-bottom: 2px solid var(--light-gray);
   margin-bottom: 2rem;
+  position: relative;
 }
 
 .tab-button {
@@ -37,18 +40,40 @@
   color: var(--text-light);
   cursor: pointer;
   border-bottom: 3px solid transparent;
-  transition: var(--transition);
+  transition: all 0.4s var(--bounce);
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(76, 175, 80, 0.3) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+  border-radius: 50%;
+}
+
+.tab-button:hover::before {
+  width: 100px;
+  height: 100px;
 }
 
 .tab-button:hover {
   color: var(--primary-color);
   background-color: rgba(76, 175, 80, 0.1);
+  transform: translateY(-2px);
 }
 
 .tab-button.active {
   color: var(--primary-color);
   border-bottom-color: var(--primary-color);
   background-color: rgba(76, 175, 80, 0.1);
+  transform: scale(1.05);
 }
 
 .tab-content {
@@ -62,15 +87,33 @@
 /* Event and Program Item Styles */
 .event-item, .program-item {
   background: var(--white);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1rem;
   box-shadow: var(--shadow);
-  transition: var(--transition);
+  transition: all 0.4s var(--bounce);
+  position: relative;
+  overflow: hidden;
+}
+
+.event-item::before, .program-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.event-item:hover::before, .program-item:hover::before {
+  left: 100%;
 }
 
 .event-item:hover, .program-item:hover {
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.2);
+  transform: translateY(-4px) scale(1.02);
 }
 
 .event-header, .program-header {
@@ -94,11 +137,32 @@
   height: 30px;
   font-size: 1.2rem;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s var(--bounce);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-delete::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.btn-delete:hover::before {
+  width: 40px;
+  height: 40px;
 }
 
 .btn-delete:hover {
   background: #d32f2f;
+  transform: scale(1.1) rotate(90deg);
 }
 
 .event-details p, .program-details p {
@@ -115,15 +179,34 @@
 /* Program Card Styles */
 .program-card {
   background: var(--white);
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 2rem;
   box-shadow: var(--shadow);
-  transition: var(--transition);
+  transition: all 0.5s var(--bounce);
+  position: relative;
+  overflow: hidden;
+}
+
+.program-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(76, 175, 80, 0.05) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.program-card:hover::after {
+  opacity: 1;
 }
 
 .program-card:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(76, 175, 80, 0.25);
+  transform: translateY(-6px) scale(1.03);
 }
 
 .program-card h3 {
@@ -135,10 +218,26 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.6;
   color: var(--text-color);
-  background-color: var(--bg-color);
+  background: linear-gradient(135deg, #f4f4f9 0%, #e8eaf6 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(33, 150, 243, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 152, 0, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* Skip Link for Accessibility */
@@ -162,10 +261,12 @@ header {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
   color: var(--white);
   padding: 1.5rem 0;
-  box-shadow: var(--shadow);
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
   position: sticky;
   top: 0;
   z-index: 50;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s var(--smooth);
 }
 
 .header-container {
@@ -178,6 +279,13 @@ header h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
   text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
 }
 
 /* Navigation Styles */
@@ -198,21 +306,44 @@ nav {
   text-decoration: none;
   padding: 0.5rem 1.5rem;
   border-radius: 25px;
-  transition: var(--transition);
+  transition: all 0.4s var(--bounce);
   font-weight: 500;
   display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+  border-radius: 50%;
+}
+
+.nav-link:hover::before {
+  width: 60px;
+  height: 60px;
 }
 
 .nav-link:hover,
 .nav-link:focus {
   background-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.05);
   outline: none;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
 }
 
 .nav-link.active {
   background-color: rgba(255, 255, 255, 0.3);
   font-weight: 600;
+  transform: scale(1.08);
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
 }
 
 /* Main Content */
@@ -363,18 +494,34 @@ p {
 
 .event-card {
   background: var(--white);
-  border-radius: 12px;
+  border-radius: 16px;
   box-shadow: var(--shadow);
   overflow: hidden;
-  transition: var(--transition);
+  transition: all 0.5s var(--bounce);
   display: flex;
   border-left: 4px solid var(--primary-color);
   min-height: 140px;
+  position: relative;
+}
+
+.event-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.1), transparent);
+  transition: left 0.8s ease;
+}
+
+.event-card:hover::before {
+  left: 100%;
 }
 
 .event-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 12px 35px rgba(76, 175, 80, 0.25);
 }
 
 .event-date {
@@ -387,6 +534,12 @@ p {
   justify-content: center;
   min-width: 90px;
   position: relative;
+  transition: all 0.4s var(--bounce);
+}
+
+.event-card:hover .event-date {
+  transform: scale(1.05);
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2);
 }
 
 .event-date::after {
@@ -488,39 +641,67 @@ p {
 .btn {
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.4s var(--bounce);
   text-decoration: none;
   display: inline-block;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.btn:hover::before {
+  width: 120px;
+  height: 120px;
+}
+
+.btn span {
+  position: relative;
+  z-index: 1;
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
   color: var(--white);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-  background-color: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, #3d8b40 100%);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
   outline: none;
 }
 
 .btn-secondary {
-  background-color: var(--secondary-color);
+  background: linear-gradient(135deg, var(--secondary-color) 0%, #1976D2 100%);
   color: var(--white);
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
 }
 
 .btn-secondary:hover,
 .btn-secondary:focus {
-  background-color: #1976D2;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
   outline: none;
 }
 
@@ -576,8 +757,33 @@ footer {
   max-width: 95%;
   background: var(--white);
   padding: 2rem;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transition: all 0.5s var(--bounce);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(76, 175, 80, 0.05) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.login-container:hover::before {
+  opacity: 1;
+}
+
+.login-container:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(76, 175, 80, 0.2);
 }
 
 .login-container h2 {
@@ -605,16 +811,25 @@ footer {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 2px solid var(--light-gray);
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 1rem;
-  transition: var(--transition);
+  transition: all 0.4s var(--bounce);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .login-form input[type="text"]:focus,
 .login-form input[type="password"]:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.08);
+  box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1), 0 6px 20px rgba(76, 175, 80, 0.15);
+  transform: scale(1.02);
+  background: var(--white);
+}
+
+.login-form input[type="text"]:hover,
+.login-form input[type="password"]:hover {
+  border-color: rgba(76, 175, 80, 0.5);
+  transform: translateY(-1px);
 }
 
 .password-input-wrapper {
@@ -633,9 +848,20 @@ footer {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.3s var(--bounce);
 }
 
-.password-toggle:focus { outline: none; }
+.password-toggle:focus { 
+  outline: none; 
+  background: rgba(76, 175, 80, 0.1);
+  transform: scale(1.1);
+}
+
+.password-toggle:hover {
+  background: rgba(76, 175, 80, 0.1);
+  transform: scale(1.15);
+}
 
 .eye-icon { display: block; }
 
@@ -709,21 +935,27 @@ footer {
   top: 20px;
   right: 20px;
   padding: 0.75rem 1rem;
-  border-radius: 10px;
+  border-radius: 15px;
   color: var(--white);
   font-weight: 600;
   z-index: 2000;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
   display: inline-block;
-  opacity: 1;
-  transform: translateX(0);
-  transition: transform 240ms ease, opacity 240ms ease;
+  opacity: 0;
+  transform: translateX(100%) scale(0.8);
+  transition: all 0.5s var(--bounce);
   min-width: 220px;
   max-width: calc(100% - 40px);
+  backdrop-filter: blur(10px);
+}
+
+.message-toast.show {
+  opacity: 1;
+  transform: translateX(0) scale(1);
 }
 
 .message-toast-hiding {
-  transform: translateX(120%);
+  transform: translateX(120%) scale(0.8);
   opacity: 0;
 }
 
